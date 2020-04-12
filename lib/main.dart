@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart' as constants;
 import 'widgets/custom_sliver_message.dart';
+import 'widgets/networking_page_header.dart';
 
 void main() {
   runApp(ForceChallengeApp());
@@ -20,39 +21,23 @@ class ForceChallengeApp extends StatelessWidget {
           backgroundColor: Colors.amber,
         ),
       ),
-      home: ForceHomePage(title: 'Force Page'),
+      home: ForceHomePage(),
     );
   }
 }
 
-class ForceHomePage extends StatefulWidget {
-  ForceHomePage({this.title});
-
-  final String title;
-
-  @override
-  _ForceHomePageState createState() => _ForceHomePageState();
-}
-
-class _ForceHomePageState extends State<ForceHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class ForceHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(
+          SliverPersistentHeader(
             pinned: true,
-            expandedHeight: 220.0,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text('FORCE TEST', style: TextStyle(fontSize: 14)),
+            floating: true,
+            delegate: NetworkingPageHeader(
+              minExtent: 100.0,
+              maxExtent: 250.0,
             ),
           ),
           CustomSliverMessage(),
