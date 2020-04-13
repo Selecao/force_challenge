@@ -14,10 +14,6 @@ class ForceChallengeApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.amber,
-        ),
       ),
       home: ForceHomePage(),
     );

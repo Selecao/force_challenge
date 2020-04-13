@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:html/dom.dart' as dom;
+
+import 'package:flutter_html/flutter_html.dart';
+
+import 'package:forcechallenge/models/message.dart';
+import 'package:forcechallenge/services/networking.dart';
+import 'package:forcechallenge/widgets/avatar.dart';
 
 import 'package:forcechallenge/constants.dart' as constants;
 
@@ -9,22 +16,62 @@ class NetworkingPageContent extends StatefulWidget {
 }
 
 class _NetworkingPageContentState extends State<NetworkingPageContent> {
+  int _newMessageCounter = 0;
+  Message message = Message(
+    unread: true,
+    text: "Оплата за услугу <b><u>поиск объекта</u></b>",
+    imageUrl: "https://picsum.photos/201/201",
+    price: 2500,
+  );
   bool _isFirstLoad = true;
-  Future<String> _loader;
+  Future<Message> _loader;
   bool _shouldFail = false;
 
   // mock function to load some data or fail after some delay
-  Future<String> getData(bool shouldFail) async {
+  Future<Message> getData() async {
+    /*NetworkHelper networkHelper = NetworkHelper(
+        'http://www.mocky.io/v2/5e85a947300000290097b2b4?mocky-delay=2000ms');
+
+    var messageData = await networkHelper.getData();
+
+    return messageData;*/
+
     await Future<void>.delayed(Duration(seconds: 3));
-    if (shouldFail) {
+    if (_shouldFail) {
       throw PlatformException(code: '404');
     }
-    return 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?';
+    return message;
+  }
+
+  void _updateUI([dynamic messageData]) {
+    setState(() {
+      /*if (messageData == null) {
+        unread = false;
+        text = 'Error getting message data';
+        imageUrl = '';
+        price = 0;
+        return;
+      }*/
+
+      var unread = messageData['unread'];
+      if (unread) {
+        _newMessageCounter++;
+      }
+
+      var text = messageData['text'];
+
+      var imageUrl = messageData['img'];
+
+      var price = messageData['price'];
+
+      var message =
+          Message(unread: unread, imageUrl: imageUrl, text: text, price: price);
+    });
   }
 
   void _retry() {
     // update loader
-    _loader = getData(!_shouldFail);
+    _loader = getData();
     setState(() => _shouldFail = !_shouldFail);
   }
 
@@ -35,19 +82,21 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
   @override
   void initState() {
     super.initState();
-    _loader = getData(_shouldFail);
+    _loader = getData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
+    return FutureBuilder<Message>(
       future: _loader,
       builder: (context, snapshot) {
         if (_isFirstLoad) {
           return SliverToBoxAdapter(
             child: TextAndButton(
-              content:
-                  'Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.',
+              content: """
+              <h5><center>Вы впервые?</center></h5>
+              <center>Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.</center>
+              """,
               buttonText: 'Загрузить уведомления',
               onPressed: _firstLoadComplete,
             ),
@@ -61,23 +110,61 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
         if (snapshot.hasError) {
           return SliverToBoxAdapter(
             child: TextAndButton(
-              content: 'Что-то пошло не так.',
+              content: """
+              <h5><center>Что-то пошло не так.</center></h5>
+              """,
               buttonText: 'Обновить',
               onPressed: _retry,
             ),
           );
         }
         if (snapshot.hasData) {
-          return SliverToBoxAdapter(
-            child: TextAndButton(
-              content: snapshot.data,
-              buttonText: 'Обновить',
-              onPressed: _retry,
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(20.0),
+                    height: 78,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.orange[100 * (index % 7)],
+                      //color: constants.backgroundLight,
+                      borderRadius: constants.framesRadius,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Avatar(
+                          radius: 15,
+                          photoUrl: snapshot.data.imageUrl,
+                        ),
+                        SizedBox(width: 20),
+                        Flexible(
+                          child: Html(
+                            data: """
+                            ${snapshot.data.text}
+                            """,
+                          ),
+                        ),
+                        if (snapshot.data.price != 0)
+                          Text(
+                            "-${snapshot.data.price} ₽",
+                            style: constants.defaultTextStyle
+                                .copyWith(color: Color(0xFF00A072)),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              childCount: 7,
             ),
           );
         }
         return SliverFillRemaining(
-          child: Center(child: Text('Нет данных')),
+          child: Center(child: Text('Это все уведомления!')),
         );
       },
     );
@@ -108,17 +195,13 @@ class TextAndButton extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: constants.defaultDarkTextStyle,
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: 'Вы впервые?\n',
-                        style: constants.boldDarkTextStyle),
-                    TextSpan(text: content),
-                  ],
-                ),
+              child: Html(
+                data: """
+                $content
+                """,
+                onLinkTap: (url) {
+                  print("Opening $url...");
+                },
               ),
             ),
           ),
