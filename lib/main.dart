@@ -15,8 +15,12 @@ class ForceChallengeApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primarySwatch: Colors.blue,
+
+          // Use the old theme but apply the following three changes
+          textTheme: Theme.of(context).textTheme.apply(
+                fontFamily: 'Helvetica',
+              )),
       home: ForceHomePage(),
     );
   }
