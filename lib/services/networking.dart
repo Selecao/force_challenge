@@ -38,21 +38,13 @@ class NetworkHelper {
     (_dio.transformer as DefaultTransformer).jsonDecodeCallback = parseJson;
 
     Response response = await _dio.get(url);
-
     print("JSON: \n ${response.data}");
 
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse (deserialize) json.
+      BuiltList<Message> messageList = _handleListResponse<Message>(response);
 
-      final dataList = response.data;
-
-      BuiltList<Message> responses = BuiltList<Message>(dataList.map((item) {
-        return serializers.deserializeWith<Message>(
-            serializers.serializerForType(Message), item);
-      }).toList());
-
-      print(responses);
-      return responses;
+      return messageList;
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load Response');
