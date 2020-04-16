@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'package:forcechallenge/constants.dart' as constants;
+//import 'package:forcechallenge/constants.dart' as constants;
 
 class NetworkingPageHeader implements SliverPersistentHeaderDelegate {
   NetworkingPageHeader({
@@ -21,7 +21,7 @@ class NetworkingPageHeader implements SliverPersistentHeaderDelegate {
       fit: StackFit.expand,
       children: [
         Image.asset(
-          'lib/images/millennium_falcon.png',
+          'lib/images/yoda_baby.png',
           fit: BoxFit.cover,
         ),
         Container(

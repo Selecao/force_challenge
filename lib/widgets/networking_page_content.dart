@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:html/dom.dart' as dom;
-
+//import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import 'package:dio/dio.dart';
+import 'package:built_collection/built_collection.dart';
+
 import 'package:forcechallenge/models/message.dart';
+import 'package:forcechallenge/models/serializers.dart';
 import 'package:forcechallenge/services/networking.dart';
 import 'package:forcechallenge/widgets/avatar.dart';
+import 'package:forcechallenge/widgets/text_and_button.dart';
 
 import 'package:forcechallenge/constants.dart' as constants;
 
@@ -16,63 +19,37 @@ class NetworkingPageContent extends StatefulWidget {
 }
 
 class _NetworkingPageContentState extends State<NetworkingPageContent> {
-  int _newMessageCounter = 0;
-  Message message = Message(
-    unread: true,
-    text: "Оплата за услугу <b><u>поиск объекта</u></b>",
-    imageUrl: "https://picsum.photos/201/201",
-    price: 2500,
-  );
   bool _isFirstLoad = true;
-  Future<Message> _loader;
-  bool _shouldFail = false;
+  Future<BuiltList<Message>> _loader;
 
-  // mock function to load some data or fail after some delay
-  Future<Message> getData() async {
-    /*NetworkHelper networkHelper = NetworkHelper(
+  // if response from server is Iterable then use this function:
+  BuiltList<T> _handleListResponse<T>(Response response) {
+    if (response.data == null) {
+      return BuiltList<T>();
+    }
+    var rawList = (response.data as List<dynamic>);
+    return BuiltList<T>(rawList.map((item) {
+      if (T is String) {
+        return item;
+      } else {
+        return serializers.deserializeWith<T>(
+            serializers.serializerForType(T), item);
+      }
+    }).toList());
+  }
+
+  Future<BuiltList<Message>> getData() async {
+    NetworkHelper networkHelper = NetworkHelper(
         'http://www.mocky.io/v2/5e85a947300000290097b2b4?mocky-delay=2000ms');
 
     var messageData = await networkHelper.getData();
 
-    return messageData;*/
-
-    await Future<void>.delayed(Duration(seconds: 3));
-    if (_shouldFail) {
-      throw PlatformException(code: '404');
-    }
-    return message;
-  }
-
-  void _updateUI([dynamic messageData]) {
-    setState(() {
-      /*if (messageData == null) {
-        unread = false;
-        text = 'Error getting message data';
-        imageUrl = '';
-        price = 0;
-        return;
-      }*/
-
-      var unread = messageData['unread'];
-      if (unread) {
-        _newMessageCounter++;
-      }
-
-      var text = messageData['text'];
-
-      var imageUrl = messageData['img'];
-
-      var price = messageData['price'];
-
-      var message =
-          Message(unread: unread, imageUrl: imageUrl, text: text, price: price);
-    });
+    return messageData;
   }
 
   void _retry() {
     // update loader
     _loader = getData();
-    setState(() => _shouldFail = !_shouldFail);
   }
 
   void _firstLoadComplete() {
@@ -87,7 +64,7 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Message>(
+    return FutureBuilder<BuiltList<Message>>(
       future: _loader,
       builder: (context, snapshot) {
         if (_isFirstLoad) {
@@ -102,23 +79,26 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
             ),
           );
         }
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SliverFillRemaining(
             child: Center(child: CircularProgressIndicator()),
           );
         }
+
         if (snapshot.hasError) {
           return SliverToBoxAdapter(
             child: TextAndButton(
-              content: """
-              <h5><center>Что-то пошло не так.</center></h5>
-              """,
+              content: "<h5><center>Что-то пошло не так.</center></h5>",
               buttonText: 'Обновить',
               onPressed: _retry,
             ),
           );
         }
+
         if (snapshot.hasData) {
+          final messageList = snapshot.data;
+
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -137,20 +117,20 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Avatar(
-                          radius: 15,
-                          photoUrl: snapshot.data.imageUrl,
+                          radius: 20,
+                          photoUrl: messageList[index].img,
                         ),
                         SizedBox(width: 20),
                         Flexible(
-                          child: Html(
-                            data: """
-                            ${snapshot.data.text}
-                            """,
+                          child: ClipRect(
+                            child: Html(
+                              data: "${messageList[index].text}",
+                            ),
                           ),
                         ),
-                        if (snapshot.data.price != 0)
+                        if (messageList[index].price != 0)
                           Text(
-                            "-${snapshot.data.price} ₽",
+                            "-${messageList[index].price} ₽",
                             style: constants.defaultTextStyle
                                 .copyWith(color: Color(0xFF00A072)),
                           ),
@@ -159,7 +139,7 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
                   ),
                 );
               },
-              childCount: 7,
+              childCount: messageList.length,
             ),
           );
         }
@@ -167,65 +147,6 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
           child: Center(child: Text('Это все уведомления!')),
         );
       },
-    );
-  }
-}
-
-class TextAndButton extends StatelessWidget {
-  const TextAndButton({Key key, this.content, this.buttonText, this.onPressed})
-      : super(key: key);
-  final String content;
-  final String buttonText;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: constants.backgroundLight,
-              borderRadius: constants.framesRadius,
-              boxShadow: [
-                constants.boxShadow,
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Html(
-                data: """
-                $content
-                """,
-                onLinkTap: (url) {
-                  print("Opening $url...");
-                },
-              ),
-            ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: FlatButton(
-                    color: constants.buttonColor,
-                    padding: const EdgeInsets.all(12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: constants.framesRadius,
-                    ),
-                    child: Text(buttonText, style: constants.defaultTextStyle),
-                    onPressed: onPressed,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }
