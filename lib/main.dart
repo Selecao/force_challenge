@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
 import 'force_home_page.dart';
+import 'constants.dart' as constants;
 
 void main() {
   runApp(ForceChallengeApp());
@@ -16,6 +17,7 @@ class ForceChallengeApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
           primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: constants.white,
 
           // Use the old theme but apply the following three changes
           textTheme: Theme.of(context).textTheme.apply(

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 final TextStyle boldTextStyle = TextStyle(
@@ -13,9 +14,13 @@ final TextStyle defaultTextStyle =
 final TextStyle defaultDarkTextStyle =
     defaultTextStyle.copyWith(color: Colors.black);
 
-final Color backgroundLight = Color(0xFFEDF4F8);
+const Color white = Color(0xFFFFFFFF);
 
-final Color buttonColor = Color(0xFF2E5BF5);
+const Color greyLight = Color(0xFFEDF4F8);
+
+const Color buttonColor = Color(0xFF2E5BF5);
+
+const Color greySeparator = Color.fromRGBO(135, 152, 173, 0.3);
 
 final BorderRadius framesRadius = BorderRadius.circular(12.0);
 

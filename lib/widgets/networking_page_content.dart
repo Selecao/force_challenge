@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-import 'package:dio/dio.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'package:forcechallenge/models/message.dart';
-import 'package:forcechallenge/models/serializers.dart';
 import 'package:forcechallenge/services/networking.dart';
 import 'package:forcechallenge/widgets/avatar.dart';
 import 'package:forcechallenge/widgets/text_and_button.dart';
@@ -21,22 +18,6 @@ class NetworkingPageContent extends StatefulWidget {
 class _NetworkingPageContentState extends State<NetworkingPageContent> {
   bool _isFirstLoad = true;
   Future<BuiltList<Message>> _loader;
-
-  // if response from server is Iterable then use this function:
-  BuiltList<T> _handleListResponse<T>(Response response) {
-    if (response.data == null) {
-      return BuiltList<T>();
-    }
-    var rawList = (response.data as List<dynamic>);
-    return BuiltList<T>(rawList.map((item) {
-      if (T is String) {
-        return item;
-      } else {
-        return serializers.deserializeWith<T>(
-            serializers.serializerForType(T), item);
-      }
-    }).toList());
-  }
 
   Future<BuiltList<Message>> getData() async {
     NetworkHelper networkHelper = NetworkHelper(
@@ -71,7 +52,7 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
           return SliverToBoxAdapter(
             child: TextAndButton(
               content: """
-              <h5><center>Вы впервые?</center></h5>
+              <h3><center>Вы впервые?</center></h3>
               <center>Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.</center>
               """,
               buttonText: 'Загрузить уведомления',
@@ -98,55 +79,160 @@ class _NetworkingPageContentState extends State<NetworkingPageContent> {
 
         if (snapshot.hasData) {
           final messageList = snapshot.data;
+          final messagesUnread = BuiltList<Message>.from(
+              messageList.where((message) => message.unread));
+          final messagesRead = BuiltList<Message>.from(
+              messageList.where((message) => !message.unread));
 
-          return SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(20.0),
-                    height: 78,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.orange[100 * (index % 7)],
-                      //color: constants.backgroundLight,
-                      borderRadius: constants.framesRadius,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Avatar(
-                          radius: 20,
-                          photoUrl: messageList[index].img,
-                        ),
-                        SizedBox(width: 20),
-                        Flexible(
-                          child: ClipRect(
-                            child: Html(
-                              data: "${messageList[index].text}",
-                            ),
-                          ),
-                        ),
-                        if (messageList[index].price != 0)
-                          Text(
-                            "-${messageList[index].price} ₽",
-                            style: constants.defaultTextStyle
-                                .copyWith(color: Color(0xFF00A072)),
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              childCount: messageList.length,
-            ),
+          return MessageSliverListWidget(
+            backgroundColor: constants.greyLight,
+            messageList: messagesUnread,
           );
         }
+
         return SliverFillRemaining(
           child: Center(child: Text('Это все уведомления!')),
         );
+        /*SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Последние',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            MessageSliverListWidget(
+              backgroundColor: constants.greyLight,
+              messageList: BuiltList<Message>.from(
+                  snapshot.data.where((message) => message.unread)),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Ранее',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            MessageSliverListWidget(
+              backgroundColor: constants.greyLight,
+              messageList: BuiltList<Message>.from(
+                  snapshot.data.where((message) => !message.unread)),
+            ),*/
       },
     );
+  }
+}
+
+class MessageSliverListWidget extends StatelessWidget {
+  MessageSliverListWidget({this.backgroundColor, this.messageList});
+  final BuiltList<Message> messageList;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(20.0),
+                  height: 78,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    //borderRadius: constants.framesRadius,
+                    color: backgroundColor,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Avatar(
+                        radius: 20,
+                        photoUrl: messageList[index].img,
+                      ),
+                      SizedBox(width: 20),
+                      Flexible(
+                        child: Html(
+                          data: "${messageList[index].text}",
+                          useRichText: true,
+                          //shrinkToFit: false,
+                        ),
+                      ),
+                      if (messageList[index].price != 0)
+                        Row(
+                          children: <Widget>[
+                            SizedBox(width: 20),
+                            Text(
+                              "-${messageList[index].price} ₽",
+                              style: constants.defaultTextStyle.copyWith(
+                                color: Color(0xFF00A072),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+                if (index != (messageList.length - 1))
+                  Divider(
+                    height: 0.0,
+                    thickness: 1.0,
+                    color: constants.greySeparator,
+                  ),
+              ],
+            ),
+          );
+        },
+        childCount: messageList.length,
+      ),
+    );
+  }
+}
+
+/// ********
+abstract class ListMessage {
+  bool unread;
+
+  Widget buildUnread(BuildContext context);
+
+  Widget buildRead(BuildContext context);
+}
+
+/// *******
+class UnreadItem implements ListMessage {
+  bool unread;
+
+  UnreadItem(this.unread);
+
+  Widget buildUnread(BuildContext context) {
+    if (unread) {
+      return Text(
+        "is not read yet",
+        style: Theme.of(context).textTheme.headline5,
+      );
+    }
+  }
+
+  Widget buildRead(BuildContext context) {
+    if (!unread) {
+      return Text(
+        'already read',
+        style: Theme.of(context).textTheme.headline5,
+      );
+    }
   }
 }

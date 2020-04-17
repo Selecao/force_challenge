@@ -14,13 +14,16 @@ class TextAndButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
+            margin: const EdgeInsets.symmetric(vertical: 40.0),
             decoration: BoxDecoration(
-              color: constants.backgroundLight,
+              color: constants.greyLight,
               borderRadius: constants.framesRadius,
               boxShadow: [
                 constants.boxShadow,
@@ -42,17 +45,14 @@ class TextAndButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: FlatButton(
-                    color: constants.buttonColor,
-                    padding: const EdgeInsets.all(12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: constants.framesRadius,
-                    ),
-                    child: Text(buttonText, style: constants.defaultTextStyle),
-                    onPressed: onPressed,
+                child: FlatButton(
+                  color: constants.buttonColor,
+                  padding: const EdgeInsets.all(12.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: constants.framesRadius,
                   ),
+                  child: Text(buttonText, style: constants.defaultTextStyle),
+                  onPressed: onPressed,
                 ),
               ),
             ],

@@ -19,22 +19,7 @@ class ForceHomePage extends StatelessWidget {
             ),
           ),
           NetworkingPageContent(),
-          /*SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FlatButton(
-                  color: constants.buttonColor,
-                  padding: const EdgeInsets.all(12.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: constants.framesRadius,
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Загрузить уведомления',
-                    style: constants.defaultTextStyle,
-                  )),
-            ),
-          ),
+          /*
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -87,6 +72,18 @@ class ForceHomePage extends StatelessWidget {
               },
             ),
           ),*/
+          SliverFillRemaining(
+            child: Center(
+              child: Text(
+                'Это все уведомления!',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
