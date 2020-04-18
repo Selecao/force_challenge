@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
+import 'package:forcechallenge/services/networking.dart';
+import 'package:forcechallenge/state/message_store.dart';
+import 'package:provider/provider.dart';
 
 import 'force_home_page.dart';
 import 'constants.dart' as constants;
@@ -23,7 +26,15 @@ class ForceChallengeApp extends StatelessWidget {
           textTheme: Theme.of(context).textTheme.apply(
                 fontFamily: 'Helvetica',
               )),
-      home: ForceHomePage(),
+
+      // wrap the top widget with provider
+      home: Provider(
+        create: (_) => MessageStore(
+          NetworkHelper(
+              'http://www.mocky.io/v2/5e85a947300000290097b2b4?mocky-delay=2000ms'),
+        ),
+        child: ForceHomePage(),
+      ),
     );
   }
 }

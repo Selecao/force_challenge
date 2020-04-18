@@ -1,10 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
+import 'package:provider/provider.dart';
 
-//import 'constants.dart' as constants;
-import 'widgets/networking_page_content.dart';
+import 'constants.dart' as constants;
+import 'package:forcechallenge/state/message_store.dart';
 import 'widgets/networking_page_header.dart';
+import 'package:forcechallenge/widgets/messages_items_view.dart';
 
-class ForceHomePage extends StatelessWidget {
+class ForceHomePage extends StatefulWidget {
+  @override
+  _ForceHomePageState createState() => _ForceHomePageState();
+}
+
+class _ForceHomePageState extends State<ForceHomePage> {
+  MessageStore _messageStore;
+  List<ReactionDisposer> _disposers;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _messageStore ??= Provider.of<MessageStore>(context);
+    _disposers ??= [
+      reaction(
+        (_) => _messageStore.errorMessage,
+        (String message) {
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              content: Text(message),
+            ),
+          );
+        },
+      ),
+    ];
+  }
+
+  @override
+  void dispose() {
+    _disposers.forEach((d) => d());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +54,7 @@ class ForceHomePage extends StatelessWidget {
               maxExtent: 250.0,
             ),
           ),
-          NetworkingPageContent(),
+          MessageItemsView(_messageStore),
           /*
           SliverToBoxAdapter(
             child: Padding(
@@ -72,7 +108,7 @@ class ForceHomePage extends StatelessWidget {
               },
             ),
           ),*/
-          SliverFillRemaining(
+          /*SliverFillRemaining(
             child: Center(
               child: Text(
                 'Это все уведомления!',
@@ -83,7 +119,7 @@ class ForceHomePage extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );

@@ -1,135 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import 'package:mobx/mobx.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:built_collection/built_collection.dart';
 
+import 'package:forcechallenge/state/message_store.dart';
 import 'package:forcechallenge/models/message.dart';
-import 'package:forcechallenge/services/networking.dart';
 import 'package:forcechallenge/widgets/avatar.dart';
 import 'package:forcechallenge/widgets/text_and_button.dart';
-
 import 'package:forcechallenge/constants.dart' as constants;
 
-class NetworkingPageContent extends StatefulWidget {
-  @override
-  _NetworkingPageContentState createState() => _NetworkingPageContentState();
-}
+class MessageItemsView extends StatelessWidget {
+  const MessageItemsView(this.messageStore);
 
-class _NetworkingPageContentState extends State<NetworkingPageContent> {
-  bool _isFirstLoad = true;
-  Future<BuiltList<Message>> _loader;
-
-  Future<BuiltList<Message>> getData() async {
-    NetworkHelper networkHelper = NetworkHelper(
-        'http://www.mocky.io/v2/5e85a947300000290097b2b4?mocky-delay=2000ms');
-
-    var messageData = await networkHelper.getData();
-
-    return messageData;
-  }
-
-  void _retry() {
-    // update loader
-    _loader = getData();
-  }
-
-  void _firstLoadComplete() {
-    setState(() => _isFirstLoad = !_isFirstLoad);
-  }
+  final MessageStore messageStore;
 
   @override
-  void initState() {
-    super.initState();
-    _loader = getData();
-  }
+  Widget build(BuildContext context) => Observer(
+        // ignore: missing_return
+        builder: (_) {
+          switch (messageStore.state) {
+            case StoreState.initial:
+              return buildInitialInput();
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<BuiltList<Message>>(
-      future: _loader,
-      builder: (context, snapshot) {
-        if (_isFirstLoad) {
-          return SliverToBoxAdapter(
-            child: TextAndButton(
-              content: """
+            case StoreState.loading:
+              return buildLoading();
+
+            case StoreState.loaded:
+              return SliverFillRemaining(
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: CustomScrollView(
+                    primary: true,
+                    slivers: [
+                      TextSliver(text: 'Последние'),
+                      MessageSliverListWidget(
+                        backgroundColor: constants.greyLight,
+                        messageList: messageStore.unreadMessages,
+                      ),
+                      TextSliver(text: 'Ранее'),
+                      MessageSliverListWidget(
+                        backgroundColor: null,
+                        messageList: messageStore.readMessages,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+          }
+        },
+      );
+
+  Widget buildInitialInput() {
+    return SliverToBoxAdapter(
+      child: TextAndButton(
+        content: """
               <h3><center>Вы впервые?</center></h3>
               <center>Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.</center>
               """,
-              buttonText: 'Загрузить уведомления',
-              onPressed: _firstLoadComplete,
-            ),
-          );
-        }
+        buttonText: 'Загрузить уведомления',
+        onPressed: _refresh,
+      ),
+    );
+  }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SliverFillRemaining(
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
+  Widget buildLoading() {
+    return SliverFillRemaining(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(),
+            Text('Загрузка сообщений...'),
+          ],
+        ),
+      ),
+    );
+  }
 
-        if (snapshot.hasError) {
-          return SliverToBoxAdapter(
-            child: TextAndButton(
-              content: "<h5><center>Что-то пошло не так.</center></h5>",
-              buttonText: 'Обновить',
-              onPressed: _retry,
-            ),
-          );
-        }
+  Widget buildMessages() {
+    return MessageSliverListWidget(
+      backgroundColor: constants.greyLight,
+      messageList: messageStore.unreadMessages,
+    );
+  }
 
-        if (snapshot.hasData) {
-          final messageList = snapshot.data;
-          final messagesUnread = BuiltList<Message>.from(
-              messageList.where((message) => message.unread));
-          final messagesRead = BuiltList<Message>.from(
-              messageList.where((message) => !message.unread));
+  Future _refresh() => messageStore.fetchMessages();
+}
 
-          return MessageSliverListWidget(
-            backgroundColor: constants.greyLight,
-            messageList: messagesUnread,
-          );
-        }
+class TextSliver extends StatelessWidget {
+  const TextSliver({this.text});
 
-        return SliverFillRemaining(
-          child: Center(child: Text('Это все уведомления!')),
-        );
-        /*SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Последние',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            MessageSliverListWidget(
-              backgroundColor: constants.greyLight,
-              messageList: BuiltList<Message>.from(
-                  snapshot.data.where((message) => message.unread)),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Ранее',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            MessageSliverListWidget(
-              backgroundColor: constants.greyLight,
-              messageList: BuiltList<Message>.from(
-                  snapshot.data.where((message) => !message.unread)),
-            ),*/
-      },
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          '$text',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
     );
   }
 }

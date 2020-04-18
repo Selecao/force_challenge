@@ -42,16 +42,17 @@ class NetworkHelper {
 
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse (deserialize) json.
-      BuiltList<Message> messageList = _handleListResponse<Message>(response);
+      //BuiltList<Message> messageList = _handleListResponse<Message>(response);
 
-      return messageList;
+      //return messageList;
+      return response;
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load Response');
     }
   }
 
-  // if response from server is Iterable then use this function:
+  // if response from server is [Iterable] then use this function:
   BuiltList<T> _handleListResponse<T>(Response response) {
     if (response.data == null) {
       return BuiltList<T>();
