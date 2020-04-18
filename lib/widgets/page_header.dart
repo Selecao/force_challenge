@@ -4,10 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-//import 'package:forcechallenge/constants.dart' as constants;
-
-class NetworkingPageHeader implements SliverPersistentHeaderDelegate {
-  NetworkingPageHeader({
+class PageHeader implements SliverPersistentHeaderDelegate {
+  PageHeader({
     this.minExtent,
     @required this.maxExtent,
   });

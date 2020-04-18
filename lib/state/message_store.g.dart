@@ -9,6 +9,12 @@ part of 'message_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$MessageStore on _MessageStore, Store {
+  Computed<int> _$unreadMessagesCounterComputed;
+
+  @override
+  int get unreadMessagesCounter => (_$unreadMessagesCounterComputed ??=
+          Computed<int>(() => super.unreadMessagesCounter))
+      .value;
   Computed<BuiltList<Message>> _$unreadMessagesComputed;
 
   @override
@@ -88,7 +94,7 @@ mixin _$MessageStore on _MessageStore, Store {
   @override
   String toString() {
     final string =
-        'messages: ${messages.toString()},errorMessage: ${errorMessage.toString()},unreadMessages: ${unreadMessages.toString()},readMessages: ${readMessages.toString()},state: ${state.toString()}';
+        'messages: ${messages.toString()},errorMessage: ${errorMessage.toString()},unreadMessagesCounter: ${unreadMessagesCounter.toString()},unreadMessages: ${unreadMessages.toString()},readMessages: ${readMessages.toString()},state: ${state.toString()}';
     return '{$string}';
   }
 }

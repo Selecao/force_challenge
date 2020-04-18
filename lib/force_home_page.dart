@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'constants.dart' as constants;
 import 'package:forcechallenge/state/message_store.dart';
-import 'widgets/networking_page_header.dart';
-import 'package:forcechallenge/widgets/messages_items_view.dart';
+import 'widgets/page_header.dart';
+import 'package:forcechallenge/widgets/message_items_view.dart';
 
 class ForceHomePage extends StatefulWidget {
   @override
@@ -49,7 +49,7 @@ class _ForceHomePageState extends State<ForceHomePage> {
           SliverPersistentHeader(
             pinned: true,
             floating: true,
-            delegate: NetworkingPageHeader(
+            delegate: PageHeader(
               minExtent: 100.0,
               maxExtent: 250.0,
             ),

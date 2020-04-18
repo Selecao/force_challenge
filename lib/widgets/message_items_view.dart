@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-import 'package:mobx/mobx.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -131,7 +130,7 @@ class MessageSliverListWidget extends StatelessWidget {
                   height: 78,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    //borderRadius: constants.framesRadius,
+                    borderRadius: getBorder(index, messageList),
                     color: backgroundColor,
                   ),
                   child: Row(
@@ -179,38 +178,19 @@ class MessageSliverListWidget extends StatelessWidget {
       ),
     );
   }
-}
 
-/// ********
-abstract class ListMessage {
-  bool unread;
-
-  Widget buildUnread(BuildContext context);
-
-  Widget buildRead(BuildContext context);
-}
-
-/// *******
-class UnreadItem implements ListMessage {
-  bool unread;
-
-  UnreadItem(this.unread);
-
-  Widget buildUnread(BuildContext context) {
-    if (unread) {
-      return Text(
-        "is not read yet",
-        style: Theme.of(context).textTheme.headline5,
+  BorderRadius getBorder(int index, BuiltList<dynamic> list) {
+    if (index == 0) {
+      return BorderRadius.only(
+        topLeft: Radius.circular(12.0),
+        topRight: Radius.circular(12.0),
       );
-    }
-  }
-
-  Widget buildRead(BuildContext context) {
-    if (!unread) {
-      return Text(
-        'already read',
-        style: Theme.of(context).textTheme.headline5,
+    } else if (index == list.length - 1) {
+      return BorderRadius.only(
+        bottomLeft: Radius.circular(12.0),
+        bottomRight: Radius.circular(12.0),
       );
-    }
+    } else
+      return null;
   }
 }

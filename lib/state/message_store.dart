@@ -29,6 +29,9 @@ abstract class _MessageStore with Store {
   String errorMessage;
 
   @computed
+  int get unreadMessagesCounter => unreadMessages.length;
+
+  @computed
   BuiltList<Message> get unreadMessages =>
       BuiltList<Message>.from(messages.where((message) => message.unread));
 
