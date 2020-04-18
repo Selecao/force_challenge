@@ -4,8 +4,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class PageHeader implements SliverPersistentHeaderDelegate {
-  PageHeader({
+import 'package:forcechallenge/constants.dart' as constants;
+
+class PageSliverHeader implements SliverPersistentHeaderDelegate {
+  PageSliverHeader({
     this.minExtent,
     @required this.maxExtent,
   });
@@ -41,6 +43,17 @@ class PageHeader implements SliverPersistentHeaderDelegate {
             ),
           ),
         ),
+        /*Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              child: Text('$counter'),
+              decoration: BoxDecoration(
+                  color: constants.buttonColor,
+                  borderRadius: BorderRadius.circular(20.0)),
+            ),
+          ],
+        ),*/
         Positioned(
           left: MediaQuery.of(context).size.width / 4,
           right: MediaQuery.of(context).size.width / 4,

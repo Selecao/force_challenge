@@ -1,11 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:forcechallenge/models/serializers.dart';
-import 'package:forcechallenge/models/message.dart';
 
 // *************************************************************************
 // If you use dio in flutter development,
@@ -51,33 +47,4 @@ class NetworkHelper {
       throw Exception('Failed to load Response');
     }
   }
-
-  // if response from server is [Iterable] then use this function:
-  BuiltList<T> _handleListResponse<T>(Response response) {
-    if (response.data == null) {
-      return BuiltList<T>();
-    }
-    var rawList = (response.data as List<dynamic>);
-    return BuiltList<T>(rawList.map((item) {
-      if (T is String) {
-        return item;
-      } else {
-        return serializers.deserializeWith<T>(
-            serializers.serializerForType(T), item);
-      }
-    }).toList());
-  }
-
-/*
-  // if response just an object use this:
-  T _handleResponse<T>(Response response) {
-    if (T is String) {
-      return response.data;
-    } else if (typeOf<void>() == T) {
-      return null;
-    }
-    return serializers.deserializeWith(
-        serializers.serializerForType(T), response.data);
-  }
-*/
 }

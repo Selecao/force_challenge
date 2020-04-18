@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:dio/dio.dart';
 import 'package:forcechallenge/services/networking.dart';
 import 'package:forcechallenge/state/message_store.dart';
 import 'package:provider/provider.dart';

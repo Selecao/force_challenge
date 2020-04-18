@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:built_collection/built_collection.dart';
 
 import 'package:forcechallenge/state/message_store.dart';
-import 'package:forcechallenge/models/message.dart';
-import 'package:forcechallenge/widgets/avatar.dart';
+import 'package:forcechallenge/widgets/message_sliver_widget.dart';
 import 'package:forcechallenge/widgets/text_and_button.dart';
+import 'package:forcechallenge/widgets/text_sliver.dart';
 import 'package:forcechallenge/constants.dart' as constants;
 
 class MessageItemsView extends StatelessWidget {
@@ -28,24 +26,57 @@ class MessageItemsView extends StatelessWidget {
 
             case StoreState.loaded:
               return SliverFillRemaining(
-                child: RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: CustomScrollView(
-                    primary: true,
-                    slivers: [
-                      TextSliver(text: 'Последние'),
-                      MessageSliverListWidget(
-                        backgroundColor: constants.greyLight,
-                        messageList: messageStore.unreadMessages,
-                      ),
-                      TextSliver(text: 'Ранее'),
-                      MessageSliverListWidget(
-                        backgroundColor: null,
-                        messageList: messageStore.readMessages,
-                      ),
-                    ],
+                child: Stack(children: [
+                  RefreshIndicator(
+                    onRefresh: _refresh,
+                    child: CustomScrollView(
+                      slivers: [
+                        TextSliver(text: 'Последние'),
+                        MessageSliverListWidget(
+                          backgroundColor: constants.greyLight,
+                          messageList: messageStore.unreadMessages,
+                        ),
+                        TextSliver(text: 'Ранее'),
+                        MessageSliverListWidget(
+                          backgroundColor: null,
+                          messageList: messageStore.readMessages,
+                        ),
+                        SliverFillRemaining(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Center(
+                              child: Text(
+                                'Это все сообщения!',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      child: Center(
+                        child: Text(
+                          '${messageStore.unreadMessagesCounter}',
+                          style: constants.defaultTextStyle,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                          color: constants.buttonColor,
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                  ),
+                ]),
               );
           }
         },
@@ -78,119 +109,5 @@ class MessageItemsView extends StatelessWidget {
     );
   }
 
-  Widget buildMessages() {
-    return MessageSliverListWidget(
-      backgroundColor: constants.greyLight,
-      messageList: messageStore.unreadMessages,
-    );
-  }
-
   Future _refresh() => messageStore.fetchMessages();
-}
-
-class TextSliver extends StatelessWidget {
-  const TextSliver({this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          '$text',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class MessageSliverListWidget extends StatelessWidget {
-  MessageSliverListWidget({this.backgroundColor, this.messageList});
-  final BuiltList<Message> messageList;
-  final Color backgroundColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.all(20.0),
-                  height: 78,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: getBorder(index, messageList),
-                    color: backgroundColor,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Avatar(
-                        radius: 20,
-                        photoUrl: messageList[index].img,
-                      ),
-                      SizedBox(width: 20),
-                      Flexible(
-                        child: Html(
-                          data: "${messageList[index].text}",
-                          useRichText: true,
-                          //shrinkToFit: false,
-                        ),
-                      ),
-                      if (messageList[index].price != 0)
-                        Row(
-                          children: <Widget>[
-                            SizedBox(width: 20),
-                            Text(
-                              "-${messageList[index].price} ₽",
-                              style: constants.defaultTextStyle.copyWith(
-                                color: Color(0xFF00A072),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-                if (index != (messageList.length - 1))
-                  Divider(
-                    height: 0.0,
-                    thickness: 1.0,
-                    color: constants.greySeparator,
-                  ),
-              ],
-            ),
-          );
-        },
-        childCount: messageList.length,
-      ),
-    );
-  }
-
-  BorderRadius getBorder(int index, BuiltList<dynamic> list) {
-    if (index == 0) {
-      return BorderRadius.only(
-        topLeft: Radius.circular(12.0),
-        topRight: Radius.circular(12.0),
-      );
-    } else if (index == list.length - 1) {
-      return BorderRadius.only(
-        bottomLeft: Radius.circular(12.0),
-        bottomRight: Radius.circular(12.0),
-      );
-    } else
-      return null;
-  }
 }

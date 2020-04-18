@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 
-import 'constants.dart' as constants;
 import 'package:forcechallenge/state/message_store.dart';
-import 'widgets/page_header.dart';
+import 'widgets/page_sliver_header.dart';
 import 'package:forcechallenge/widgets/message_items_view.dart';
 
 class ForceHomePage extends StatefulWidget {
@@ -21,6 +20,8 @@ class _ForceHomePageState extends State<ForceHomePage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _messageStore ??= Provider.of<MessageStore>(context);
+
+    // disposers for error messages
     _disposers ??= [
       reaction(
         (_) => _messageStore.errorMessage,
@@ -49,77 +50,12 @@ class _ForceHomePageState extends State<ForceHomePage> {
           SliverPersistentHeader(
             pinned: true,
             floating: true,
-            delegate: PageHeader(
+            delegate: PageSliverHeader(
               minExtent: 100.0,
               maxExtent: 250.0,
             ),
           ),
           MessageItemsView(_messageStore),
-          /*
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Последние',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Container(
-                  alignment: Alignment.center,
-                  color: Colors.orange[100 * (index % 9)],
-                  child: Text(
-                    'orange $index',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                );
-              },
-              childCount: 9,
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Ранее',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Container(
-                  alignment: Alignment.center,
-                  color: Colors.lightBlue[100 * (index % 9)],
-                  child: Text('List Item $index'),
-                );
-              },
-            ),
-          ),*/
-          /*SliverFillRemaining(
-            child: Center(
-              child: Text(
-                'Это все уведомления!',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),*/
         ],
       ),
     );
