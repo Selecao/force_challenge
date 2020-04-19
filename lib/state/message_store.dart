@@ -28,9 +28,8 @@ abstract class _MessageStore with Store {
   @observable
   String errorMessage;
 
-  @computed
-  int get unreadMessagesCounter =>
-      unreadMessages.isNotEmpty ? unreadMessages.length : 0;
+  @observable
+  int unreadMessagesCounter = 0;
 
   @computed
   BuiltList<Message> get unreadMessages =>
@@ -54,6 +53,11 @@ abstract class _MessageStore with Store {
         : StoreState.loaded;
   }
 
+  @action
+  void updateUnreadCounter() {
+    unreadMessagesCounter =
+        unreadMessages.isNotEmpty ? unreadMessages.length : 0;
+  }
   /*@action
   Future fetchMessages() => _messagesFuture =
           ObservableFuture(_networkHelper.getData().then((response) {

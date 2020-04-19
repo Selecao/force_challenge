@@ -4,7 +4,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'package:provider/provider.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+
 import 'package:forcechallenge/constants.dart' as constants;
+import 'package:forcechallenge/state/message_store.dart';
 
 class PageSliverHeader implements SliverPersistentHeaderDelegate {
   PageSliverHeader({
@@ -17,6 +21,9 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // TODO: is this dependency injection right?
+    var _counter = Provider.of<MessageStore>(context).unreadMessagesCounter;
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -43,17 +50,28 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
             ),
           ),
         ),
-        /*Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Container(
-              child: Text('$counter'),
-              decoration: BoxDecoration(
-                  color: constants.buttonColor,
-                  borderRadius: BorderRadius.circular(20.0)),
-            ),
-          ],
-        ),*/
+        Observer(
+            builder: (_) => _counter != 0
+                ? Positioned(
+                    //top: 10,
+                    right: 20,
+                    child: SafeArea(
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            '$_counter',
+                            style: constants.defaultTextStyle,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            color: constants.buttonColor,
+                            borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                    ),
+                  )
+                : SizedBox()),
         Positioned(
           left: MediaQuery.of(context).size.width / 4,
           right: MediaQuery.of(context).size.width / 4,

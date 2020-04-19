@@ -25,58 +25,41 @@ class MessageItemsView extends StatelessWidget {
               return buildLoading();
 
             case StoreState.loaded:
+              messageStore.updateUnreadCounter();
+
               return SliverFillRemaining(
-                child: Stack(children: [
-                  RefreshIndicator(
-                    onRefresh: _refresh,
-                    child: CustomScrollView(
-                      slivers: [
-                        TextSliver(text: 'Последние'),
-                        MessageSliverListWidget(
-                          backgroundColor: constants.greyLight,
-                          messageList: messageStore.unreadMessages,
-                        ),
-                        TextSliver(text: 'Ранее'),
-                        MessageSliverListWidget(
-                          backgroundColor: null,
-                          messageList: messageStore.readMessages,
-                        ),
-                        SliverFillRemaining(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                'Это все сообщения!',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: CustomScrollView(
+                    slivers: [
+                      TextSliver(text: 'Последние'),
+                      MessageSliverListWidget(
+                        backgroundColor: constants.greyLight,
+                        messageList: messageStore.unreadMessages,
+                      ),
+                      TextSliver(text: 'Ранее'),
+                      MessageSliverListWidget(
+                        backgroundColor: null,
+                        messageList: messageStore.readMessages,
+                      ),
+                      SliverFillRemaining(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Center(
+                            child: Text(
+                              'Это все сообщения!',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      child: Center(
-                        child: Text(
-                          '${messageStore.unreadMessagesCounter}',
-                          style: constants.defaultTextStyle,
-                        ),
                       ),
-                      decoration: BoxDecoration(
-                          color: constants.buttonColor,
-                          borderRadius: BorderRadius.circular(20.0)),
-                    ),
+                    ],
                   ),
-                ]),
+                ),
               );
           }
         },
