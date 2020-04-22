@@ -4,8 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:forcechallenge/state/message_store.dart';
 import 'package:forcechallenge/widgets/message_sliver_widget.dart';
+import 'package:forcechallenge/widgets/page_sliver_header.dart';
 import 'package:forcechallenge/widgets/text_and_button.dart';
-import 'package:forcechallenge/widgets/text_sliver.dart';
+import 'package:forcechallenge/widgets/custom_text.dart';
 import 'package:forcechallenge/constants.dart' as constants;
 
 class MessageItemsView extends StatelessWidget {
@@ -27,38 +28,47 @@ class MessageItemsView extends StatelessWidget {
             case StoreState.loaded:
               messageStore.updateUnreadCounter();
 
-              return SliverFillRemaining(
-                child: RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: CustomScrollView(
-                    slivers: [
-                      TextSliver(text: 'Последние'),
-                      MessageSliverListWidget(
-                        backgroundColor: constants.greyLight,
-                        messageList: messageStore.unreadMessages,
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverPersistentHeader(
+                      pinned: true,
+                      floating: true,
+                      delegate: PageSliverHeader(
+                        minExtent: 100.0,
+                        maxExtent: 250.0,
                       ),
-                      TextSliver(text: 'Ранее'),
-                      MessageSliverListWidget(
-                        backgroundColor: null,
-                        messageList: messageStore.readMessages,
-                      ),
-                      SliverFillRemaining(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: Text(
-                              'Это все сообщения!',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                              ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: CustomText(text: 'Последние'),
+                    ),
+                    MessageSliverListWidget(
+                      backgroundColor: constants.greyLight,
+                      messageList: messageStore.unreadMessages,
+                    ),
+                    SliverToBoxAdapter(child: CustomText(text: 'Ранее')),
+                    MessageSliverListWidget(
+                      backgroundColor: null,
+                      messageList: messageStore.readMessages,
+                    ),
+                    SliverFillRemaining(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            'Это все сообщения!',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
           }
@@ -66,30 +76,50 @@ class MessageItemsView extends StatelessWidget {
       );
 
   Widget buildInitialInput() {
-    return SliverToBoxAdapter(
-      child: TextAndButton(
-        content: """
-              <h3><center>Вы впервые?</center></h3>
-              <center>Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.</center>
-              """,
-        buttonText: 'Загрузить уведомления',
-        onPressed: _refresh,
+    return CustomScrollView(slivers: [
+      SliverPersistentHeader(
+        pinned: true,
+        floating: true,
+        delegate: PageSliverHeader(
+          minExtent: 100.0,
+          maxExtent: 250.0,
+        ),
       ),
-    );
+      SliverToBoxAdapter(
+        child: TextAndButton(
+          content: """
+                <h3><center>Вы впервые?</center></h3>
+                <center>Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.</center>
+                """,
+          buttonText: 'Загрузить уведомления',
+          onPressed: _refresh,
+        ),
+      ),
+    ]);
   }
 
   Widget buildLoading() {
-    return SliverFillRemaining(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            CircularProgressIndicator(),
-            Text('Загрузка сообщений...'),
-          ],
+    return CustomScrollView(slivers: [
+      SliverPersistentHeader(
+        pinned: true,
+        floating: true,
+        delegate: PageSliverHeader(
+          minExtent: 100.0,
+          maxExtent: 250.0,
         ),
       ),
-    );
+      SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              CircularProgressIndicator(),
+              Text('Загрузка сообщений...'),
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 
   Future _refresh() => messageStore.fetchMessages();

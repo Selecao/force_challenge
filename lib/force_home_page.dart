@@ -45,19 +45,7 @@ class _ForceHomePageState extends State<ForceHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverPersistentHeader(
-            pinned: true,
-            floating: true,
-            delegate: PageSliverHeader(
-              minExtent: 100.0,
-              maxExtent: 250.0,
-            ),
-          ),
-          MessageItemsView(_messageStore),
-        ],
-      ),
+      body: MessageItemsView(_messageStore),
     );
   }
 }

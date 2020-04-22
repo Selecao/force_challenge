@@ -90,10 +90,6 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
     );
   }
 
-  /*Color gradientColor(double shrinkOffset) {
-
-  }*/
-
   Color titleColor(double shrinkOffset) {
     return Color.lerp(Colors.black, Colors.white,
         1.0 - (max(0.0, shrinkOffset) * 2) / maxExtent);
