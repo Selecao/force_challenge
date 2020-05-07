@@ -17,10 +17,16 @@ abstract class Message implements Built<Message, MessageBuilder> {
 
   @BuiltValueField(wireName: 'unread')
   bool get unread;
+
   @BuiltValueField(wireName: 'text')
+  @nullable
   String get text;
+
   @BuiltValueField(wireName: 'img')
+  @nullable
   String get img;
+
+  @nullable
   @BuiltValueField(wireName: 'price')
   int get price;
 

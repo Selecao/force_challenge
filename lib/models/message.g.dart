@@ -20,14 +20,25 @@ class _$MessageSerializer implements StructuredSerializer<Message> {
     final result = <Object>[
       'unread',
       serializers.serialize(object.unread, specifiedType: const FullType(bool)),
-      'text',
-      serializers.serialize(object.text, specifiedType: const FullType(String)),
-      'img',
-      serializers.serialize(object.img, specifiedType: const FullType(String)),
-      'price',
-      serializers.serialize(object.price, specifiedType: const FullType(int)),
     ];
-
+    if (object.text != null) {
+      result
+        ..add('text')
+        ..add(serializers.serialize(object.text,
+            specifiedType: const FullType(String)));
+    }
+    if (object.img != null) {
+      result
+        ..add('img')
+        ..add(serializers.serialize(object.img,
+            specifiedType: const FullType(String)));
+    }
+    if (object.price != null) {
+      result
+        ..add('price')
+        ..add(serializers.serialize(object.price,
+            specifiedType: const FullType(int)));
+    }
     return result;
   }
 
@@ -81,15 +92,6 @@ class _$Message extends Message {
   _$Message._({this.unread, this.text, this.img, this.price}) : super._() {
     if (unread == null) {
       throw new BuiltValueNullFieldError('Message', 'unread');
-    }
-    if (text == null) {
-      throw new BuiltValueNullFieldError('Message', 'text');
-    }
-    if (img == null) {
-      throw new BuiltValueNullFieldError('Message', 'img');
-    }
-    if (price == null) {
-      throw new BuiltValueNullFieldError('Message', 'price');
     }
   }
 
