@@ -3,7 +3,6 @@ import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 
 import 'package:forcechallenge/state/message_store.dart';
-import 'widgets/page_sliver_header.dart';
 import 'package:forcechallenge/widgets/message_items_view.dart';
 
 class ForceHomePage extends StatefulWidget {
