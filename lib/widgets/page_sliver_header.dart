@@ -28,7 +28,7 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
       fit: StackFit.expand,
       children: [
         Image.asset(
-          'lib/images/yoda_baby.png',
+          'assets/images/yoda_baby.png',
           fit: BoxFit.cover,
         ),
         Container(
