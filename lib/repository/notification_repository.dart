@@ -16,8 +16,10 @@ parseJson(String text) {
 }
 // *************************************************************************
 
-class NetworkHelper {
-  NetworkHelper(this.url);
+// Repository - в принципе общепринятое название для того, что работает с сетью или БД
+
+class NotificationRepository {
+  NotificationRepository(this.url);
 
   final String url;
 
