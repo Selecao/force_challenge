@@ -8,12 +8,13 @@ import 'package:built_value/serializer.dart';
 
 import 'package:forcechallenge/models/serializers.dart';
 
-part 'message.g.dart';
+part 'notification.g.dart';
 
-abstract class Message implements Built<Message, MessageBuilder> {
-  Message._();
+abstract class Notification
+    implements Built<Notification, NotificationBuilder> {
+  Notification._();
 
-  factory Message([updates(MessageBuilder b)]) = _$Message;
+  factory Notification([updates(NotificationBuilder b)]) = _$Notification;
 
   @BuiltValueField(wireName: 'unread')
   bool get unread;
@@ -31,13 +32,14 @@ abstract class Message implements Built<Message, MessageBuilder> {
   int get price;
 
   String toJson() {
-    return json.encode(serializers.serializeWith(Message.serializer, this));
+    return json
+        .encode(serializers.serializeWith(Notification.serializer, this));
   }
 
-  static Message fromJson(String jsonString) {
+  static Notification fromJson(String jsonString) {
     return serializers.deserializeWith(
-        Message.serializer, json.decode(jsonString));
+        Notification.serializer, json.decode(jsonString));
   }
 
-  static Serializer<Message> get serializer => _$messageSerializer;
+  static Serializer<Notification> get serializer => _$notificationSerializer;
 }

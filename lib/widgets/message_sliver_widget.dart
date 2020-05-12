@@ -4,12 +4,12 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:forcechallenge/widgets/avatar.dart';
-import 'package:forcechallenge/models/message.dart';
+import '../models/notification.dart' as a;
 import 'package:forcechallenge/constants.dart' as constants;
 
 class MessageSliverListWidget extends StatelessWidget {
-  MessageSliverListWidget({this.backgroundColor, this.messageList});
-  final BuiltList<Message> messageList;
+  MessageSliverListWidget({this.backgroundColor, this.notificationList});
+  final BuiltList<a.Notification> notificationList;
   final Color backgroundColor;
 
   @override
@@ -26,7 +26,7 @@ class MessageSliverListWidget extends StatelessWidget {
                   height: 78,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: getBorder(index, messageList),
+                    borderRadius: getBorder(index, notificationList),
                     color: backgroundColor,
                   ),
                   child: Row(
@@ -34,22 +34,22 @@ class MessageSliverListWidget extends StatelessWidget {
                     children: <Widget>[
                       Avatar(
                         radius: 20,
-                        photoUrl: messageList[index].img,
+                        photoUrl: notificationList[index].img,
                       ),
                       SizedBox(width: 20),
                       Flexible(
                         child: Html(
-                          data: "${messageList[index].text}",
+                          data: "${notificationList[index].text}",
                           useRichText: true,
                           //shrinkToFit: false,
                         ),
                       ),
-                      if (messageList[index].price != 0)
+                      if (notificationList[index].price != 0)
                         Row(
                           children: <Widget>[
                             SizedBox(width: 20),
                             Text(
-                              "-${messageList[index].price} ₽",
+                              "-${notificationList[index].price} ₽",
                               style: constants.defaultTextStyle.copyWith(
                                 color: Color(0xFF00A072),
                                 fontWeight: FontWeight.bold,
@@ -60,7 +60,7 @@ class MessageSliverListWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (index != (messageList.length - 1))
+                if (index != (notificationList.length - 1))
                   Divider(
                     height: 0.0,
                     thickness: 1.0,
@@ -70,7 +70,7 @@ class MessageSliverListWidget extends StatelessWidget {
             ),
           );
         },
-        childCount: messageList.length,
+        childCount: notificationList.length,
       ),
     );
   }

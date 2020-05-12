@@ -2,7 +2,7 @@ import 'package:forcechallenge/repository/notification_repository.dart';
 import 'package:mobx/mobx.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../models/message.dart';
+import '../models/notification.dart';
 import '../models/serializers.dart';
 
 part 'message_store.g.dart';
@@ -21,9 +21,9 @@ abstract class _MessageStore with Store {
   _MessageStore();
 
   @observable
-  ObservableFuture<BuiltList<Message>> _messagesFuture;
+  ObservableFuture<BuiltList<Notification>> _messagesFuture;
   @observable
-  BuiltList<Message> messages;
+  BuiltList<Notification> messages;
 
   @observable
   String errorMessage;
@@ -32,12 +32,12 @@ abstract class _MessageStore with Store {
   int unreadMessagesCounter = 0;
 
   @computed
-  BuiltList<Message> get unreadMessages =>
-      BuiltList<Message>.from(messages.where((message) => message.unread));
+  BuiltList<Notification> get unreadMessages =>
+      BuiltList<Notification>.from(messages.where((message) => message.unread));
 
   @computed
-  BuiltList<Message> get readMessages =>
-      BuiltList<Message>.from(messages.where((message) => !message.unread));
+  BuiltList<Notification> get readMessages => BuiltList<Notification>.from(
+      messages.where((message) => !message.unread));
 
   @computed
   StoreState get state {
@@ -67,7 +67,7 @@ abstract class _MessageStore with Store {
   // fetch messageList
   @action
   // ignore: missing_return
-  Future<BuiltList<Message>> fetchMessages() async {
+  Future<BuiltList<Notification>> fetchMessages() async {
     try {
       // Reset the possible previous error message.
       errorMessage = null;

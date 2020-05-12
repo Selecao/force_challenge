@@ -9,17 +9,17 @@ part of 'message_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$MessageStore on _MessageStore, Store {
-  Computed<BuiltList<Message>> _$unreadMessagesComputed;
+  Computed<BuiltList<Notification>> _$unreadMessagesComputed;
 
   @override
-  BuiltList<Message> get unreadMessages => (_$unreadMessagesComputed ??=
-          Computed<BuiltList<Message>>(() => super.unreadMessages))
+  BuiltList<Notification> get unreadMessages => (_$unreadMessagesComputed ??=
+          Computed<BuiltList<Notification>>(() => super.unreadMessages))
       .value;
-  Computed<BuiltList<Message>> _$readMessagesComputed;
+  Computed<BuiltList<Notification>> _$readMessagesComputed;
 
   @override
-  BuiltList<Message> get readMessages => (_$readMessagesComputed ??=
-          Computed<BuiltList<Message>>(() => super.readMessages))
+  BuiltList<Notification> get readMessages => (_$readMessagesComputed ??=
+          Computed<BuiltList<Notification>>(() => super.readMessages))
       .value;
   Computed<StoreState> _$stateComputed;
 
@@ -30,14 +30,14 @@ mixin _$MessageStore on _MessageStore, Store {
   final _$_messagesFutureAtom = Atom(name: '_MessageStore._messagesFuture');
 
   @override
-  ObservableFuture<BuiltList<Message>> get _messagesFuture {
+  ObservableFuture<BuiltList<Notification>> get _messagesFuture {
     _$_messagesFutureAtom.context.enforceReadPolicy(_$_messagesFutureAtom);
     _$_messagesFutureAtom.reportObserved();
     return super._messagesFuture;
   }
 
   @override
-  set _messagesFuture(ObservableFuture<BuiltList<Message>> value) {
+  set _messagesFuture(ObservableFuture<BuiltList<Notification>> value) {
     _$_messagesFutureAtom.context.conditionallyRunInAction(() {
       super._messagesFuture = value;
       _$_messagesFutureAtom.reportChanged();
@@ -47,14 +47,14 @@ mixin _$MessageStore on _MessageStore, Store {
   final _$messagesAtom = Atom(name: '_MessageStore.messages');
 
   @override
-  BuiltList<Message> get messages {
+  BuiltList<Notification> get messages {
     _$messagesAtom.context.enforceReadPolicy(_$messagesAtom);
     _$messagesAtom.reportObserved();
     return super.messages;
   }
 
   @override
-  set messages(BuiltList<Message> value) {
+  set messages(BuiltList<Notification> value) {
     _$messagesAtom.context.conditionallyRunInAction(() {
       super.messages = value;
       _$messagesAtom.reportChanged();
@@ -101,7 +101,7 @@ mixin _$MessageStore on _MessageStore, Store {
   final _$fetchMessagesAsyncAction = AsyncAction('fetchMessages');
 
   @override
-  Future<BuiltList<Message>> fetchMessages() {
+  Future<BuiltList<Notification>> fetchMessages() {
     return _$fetchMessagesAsyncAction.run(() => super.fetchMessages());
   }
 

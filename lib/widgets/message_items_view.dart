@@ -46,12 +46,12 @@ class MessageItemsView extends StatelessWidget {
                     ),
                     MessageSliverListWidget(
                       backgroundColor: constants.greyLight,
-                      messageList: messageStore.unreadMessages,
+                      notificationList: messageStore.unreadMessages,
                     ),
                     SliverToBoxAdapter(child: CustomText(text: 'Ранее')),
                     MessageSliverListWidget(
                       backgroundColor: null,
-                      messageList: messageStore.readMessages,
+                      notificationList: messageStore.readMessages,
                     ),
                     SliverFillRemaining(
                       child: Padding(

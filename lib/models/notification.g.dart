@@ -6,16 +6,17 @@ part of message;
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<Message> _$messageSerializer = new _$MessageSerializer();
+Serializer<Notification> _$notificationSerializer =
+    new _$NotificationSerializer();
 
-class _$MessageSerializer implements StructuredSerializer<Message> {
+class _$NotificationSerializer implements StructuredSerializer<Notification> {
   @override
-  final Iterable<Type> types = const [Message, _$Message];
+  final Iterable<Type> types = const [Notification, _$Notification];
   @override
-  final String wireName = 'Message';
+  final String wireName = 'Notification';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Message object,
+  Iterable<Object> serialize(Serializers serializers, Notification object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'unread',
@@ -43,9 +44,9 @@ class _$MessageSerializer implements StructuredSerializer<Message> {
   }
 
   @override
-  Message deserialize(Serializers serializers, Iterable<Object> serialized,
+  Notification deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new MessageBuilder();
+    final result = new NotificationBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -76,7 +77,7 @@ class _$MessageSerializer implements StructuredSerializer<Message> {
   }
 }
 
-class _$Message extends Message {
+class _$Notification extends Notification {
   @override
   final bool unread;
   @override
@@ -86,26 +87,26 @@ class _$Message extends Message {
   @override
   final int price;
 
-  factory _$Message([void Function(MessageBuilder) updates]) =>
-      (new MessageBuilder()..update(updates)).build();
+  factory _$Notification([void Function(NotificationBuilder) updates]) =>
+      (new NotificationBuilder()..update(updates)).build();
 
-  _$Message._({this.unread, this.text, this.img, this.price}) : super._() {
+  _$Notification._({this.unread, this.text, this.img, this.price}) : super._() {
     if (unread == null) {
-      throw new BuiltValueNullFieldError('Message', 'unread');
+      throw new BuiltValueNullFieldError('Notification', 'unread');
     }
   }
 
   @override
-  Message rebuild(void Function(MessageBuilder) updates) =>
+  Notification rebuild(void Function(NotificationBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  MessageBuilder toBuilder() => new MessageBuilder()..replace(this);
+  NotificationBuilder toBuilder() => new NotificationBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Message &&
+    return other is Notification &&
         unread == other.unread &&
         text == other.text &&
         img == other.img &&
@@ -121,7 +122,7 @@ class _$Message extends Message {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Message')
+    return (newBuiltValueToStringHelper('Notification')
           ..add('unread', unread)
           ..add('text', text)
           ..add('img', img)
@@ -130,8 +131,9 @@ class _$Message extends Message {
   }
 }
 
-class MessageBuilder implements Builder<Message, MessageBuilder> {
-  _$Message _$v;
+class NotificationBuilder
+    implements Builder<Notification, NotificationBuilder> {
+  _$Notification _$v;
 
   bool _unread;
   bool get unread => _$this._unread;
@@ -149,9 +151,9 @@ class MessageBuilder implements Builder<Message, MessageBuilder> {
   int get price => _$this._price;
   set price(int price) => _$this._price = price;
 
-  MessageBuilder();
+  NotificationBuilder();
 
-  MessageBuilder get _$this {
+  NotificationBuilder get _$this {
     if (_$v != null) {
       _unread = _$v.unread;
       _text = _$v.text;
@@ -163,22 +165,23 @@ class MessageBuilder implements Builder<Message, MessageBuilder> {
   }
 
   @override
-  void replace(Message other) {
+  void replace(Notification other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$Message;
+    _$v = other as _$Notification;
   }
 
   @override
-  void update(void Function(MessageBuilder) updates) {
+  void update(void Function(NotificationBuilder) updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$Message build() {
+  _$Notification build() {
     final _$result = _$v ??
-        new _$Message._(unread: unread, text: text, img: img, price: price);
+        new _$Notification._(
+            unread: unread, text: text, img: img, price: price);
     replace(_$result);
     return _$result;
   }
