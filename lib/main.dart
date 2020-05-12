@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:forcechallenge/services/networking.dart';
-import 'package:forcechallenge/state/message_store.dart';
 import 'package:provider/provider.dart';
 
+import 'package:forcechallenge/state/message_store.dart';
 import 'force_home_page.dart';
 import 'constants.dart' as constants;
 
@@ -29,10 +28,7 @@ class ForceChallengeApp extends StatelessWidget {
 
       // wrap the top widget with provider
       home: Provider(
-        create: (_) => MessageStore(
-          NetworkHelper(
-              'http://www.mocky.io/v2/5e85a947300000290097b2b4?mocky-delay=2000ms'),
-        ),
+        create: (_) => MessageStore(),
         child: ForceHomePage(),
       ),
     );

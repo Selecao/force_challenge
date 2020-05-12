@@ -101,7 +101,7 @@ mixin _$MessageStore on _MessageStore, Store {
   final _$fetchMessagesAsyncAction = AsyncAction('fetchMessages');
 
   @override
-  Future<dynamic> fetchMessages() {
+  Future<BuiltList<Message>> fetchMessages() {
     return _$fetchMessagesAsyncAction.run(() => super.fetchMessages());
   }
 

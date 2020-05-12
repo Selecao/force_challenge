@@ -18,10 +18,10 @@ parseJson(String text) {
 }
 // *************************************************************************
 
-// Repository - в принципе общепринятое название для того, что работает с сетью или БД
+// Repository - общепринятое название для того, что работает с сетью или БД
 
 class ApiService {
-  static final String _notificationBaseUrl = "http://www.mocky.io/v2";
+  static final String _stagingBaseUrl = "http://www.mocky.io/v2";
 
   String get baseUrl => _dio.options.baseUrl;
   set baseUrl(value) {
@@ -29,6 +29,48 @@ class ApiService {
   }
 
   Dio _dio;
+
+  ApiService() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _stagingBaseUrl,
+        connectTimeout: 5000,
+        receiveTimeout: 3000,
+      ),
+    );
+
+    //_dio.interceptors.add(tokenInterceptor);
+    _dio.interceptors
+        .add(LogInterceptor(requestBody: true, responseBody: true));
+
+    //Custom jsonDecodeCallback for flutter development ********************
+    (_dio.transformer as DefaultTransformer).jsonDecodeCallback = parseJson;
+  }
+
+  Future<BuiltList<T>> getList<T>(
+    String path, {
+    //Map<String, dynamic> queryParameters,
+    Options options,
+    CancelToken cancelToken,
+    ProgressCallback onReceiveProgress,
+    //Type errorType = ApiError,
+  }) async {
+    assert(T != dynamic);
+
+    try {
+      Response response = await _dio.get(
+        path,
+        //queryParameters: _filterQueryParameters(queryParameters),
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return _handleListResponse<T>(response);
+    } catch (e, s) {
+      throw Exception('Failed to load Response');
+      //_handleError(e, s, errorType: errorType);
+    }
+  }
 
   // if response from server is [Iterable] then use this function:
   BuiltList<T> _handleListResponse<T>(Response response) {
@@ -46,47 +88,8 @@ class ApiService {
     }).toList());
   }
 
-  ApiService() {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: _notificationBaseUrl,
-        connectTimeout: 5000,
-        receiveTimeout: 3000,
-      ),
-    );
-
-    //_dio.interceptors.add(tokenInterceptor);
-    _dio.interceptors
-        .add(LogInterceptor(requestBody: true, responseBody: true));
-
-    //Custom jsonDecodeCallback for flutter development ********************
-    (_dio.transformer as DefaultTransformer).jsonDecodeCallback = parseJson;
-
-    Future<BuiltList<T>> get<T>(
-      String path, {
-      //Map<String, dynamic> queryParameters,
-      Options options,
-      CancelToken cancelToken,
-      ProgressCallback onReceiveProgress,
-      Type errorType = ApiError,
-    }) async {
-      assert(T != dynamic);
-
-      try {
-        Response response = await _dio.get(
-          path,
-          //queryParameters: _filterQueryParameters(queryParameters),
-          options: options,
-          cancelToken: cancelToken,
-          onReceiveProgress: onReceiveProgress,
-        );
-        return _handleListResponse<T>(response);
-      } catch (e, s) {
-        throw _handleError(e, s, errorType: errorType);
-      }
-    }
-
-    /*Response response = await _dio.get(url);
+  /*old version
+    Response response = await _dio.get(url);
     print("JSON: \n ${response.data}");
 
     if (response.statusCode == 200) {
@@ -99,5 +102,5 @@ class ApiService {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load Response');
     }*/
-  }
+
 }
