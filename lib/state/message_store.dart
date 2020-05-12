@@ -11,14 +11,13 @@ enum MessageType { unread, read }
 enum StoreState { initial, loaded, loading }
 
 class MessageStore extends _MessageStore with _$MessageStore {
-  MessageStore();
+  MessageStore(notificationRepository) : super(notificationRepository);
 }
 
 abstract class _MessageStore with Store {
-  static NotificationRepository _notificationRepository =
-      NotificationRepository();
+  final NotificationRepository _notificationRepository;
 
-  _MessageStore();
+  _MessageStore(this._notificationRepository);
 
   @observable
   ObservableFuture<BuiltList<Notification>> _messagesFuture;
