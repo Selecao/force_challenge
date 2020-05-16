@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:forcechallenge/components/span_parser.dart';
 
 import 'package:forcechallenge/widgets/avatar.dart';
 import '../models/notification.dart' as a;
@@ -38,10 +38,39 @@ class MessageSliverList extends StatelessWidget {
                       ),
                       SizedBox(width: 20),
                       Flexible(
-                        child: Html(
-                          data: "${notificationList[index].text}",
-                          useRichText: true,
-                          //shrinkToFit: false,
+                        child: Text.rich(
+                          TextSpan(
+                            children: parseSpans(
+                              source: notificationList[index].text,
+                              spanBuilder: (tag, text) {
+                                switch (tag) {
+                                  case 'b':
+                                    return TextSpan(
+                                      text: text,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    );
+                                  case 'y':
+                                    return TextSpan(
+                                      text: text,
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic),
+                                    );
+                                  case 'u':
+                                    return TextSpan(
+                                      text: text,
+                                      style: TextStyle(
+                                          decoration: TextDecoration.underline),
+                                    );
+                                  default:
+                                    return TextSpan(
+                                      text: text,
+                                      style: constants.defaultDarkTextStyle,
+                                    );
+                                }
+                              },
+                            ),
+                          ),
                         ),
                       ),
                       if (notificationList[index].price != 0)
@@ -50,7 +79,7 @@ class MessageSliverList extends StatelessWidget {
                             SizedBox(width: 20),
                             Text(
                               "-${notificationList[index].price} ₽",
-                              style: constants.defaultTextStyle.copyWith(
+                              style: constants.defaultDarkTextStyle.copyWith(
                                 color: Color(0xFF00A072),
                                 fontWeight: FontWeight.bold,
                               ),
