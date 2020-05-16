@@ -21,8 +21,7 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // TODO: is this dependency injection right?
-    var _counter = Provider.of<MessageStore>(context).unreadMessagesCounter;
+    MessageStore messageStore = Provider.of(context, listen: false);
 
     return Stack(
       fit: StackFit.expand,
@@ -51,9 +50,8 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
           ),
         ),
         Observer(
-            builder: (_) => _counter != 0
+            builder: (_) => messageStore.unreadMessagesCounter != 0
                 ? Positioned(
-                    //top: 10,
                     right: 20,
                     child: SafeArea(
                       child: Container(
@@ -61,7 +59,7 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
                         height: 40,
                         child: Center(
                           child: Text(
-                            '$_counter',
+                            '${messageStore.unreadMessagesCounter}',
                             style: constants.defaultTextStyle,
                           ),
                         ),
@@ -71,7 +69,7 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
                       ),
                     ),
                   )
-                : SizedBox()),
+                : Container()),
         Positioned(
           left: MediaQuery.of(context).size.width / 4,
           right: MediaQuery.of(context).size.width / 4,
@@ -80,7 +78,8 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
             'FORCE TEST',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 28.0,
+              fontSize: 28.0 -
+                  12.0 * min(1, (shrinkOffset / (maxExtent - minExtent))),
               //color: Colors.white.withOpacity(titleOpacity(shrinkOffset)),
               color: titleColor(shrinkOffset),
             ),
