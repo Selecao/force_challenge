@@ -14,6 +14,12 @@ final TextStyle defaultTextStyle =
 final TextStyle defaultDarkTextStyle =
     defaultTextStyle.copyWith(color: Colors.black);
 
+final TextStyle notificationTitleTextStyle = TextStyle(
+  fontSize: 16,
+  color: Colors.black,
+  fontWeight: FontWeight.w700,
+);
+
 const Color white = Color(0xFFFFFFFF);
 
 const Color greyLight = Color(0xFFEDF4F8);
