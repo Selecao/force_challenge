@@ -7,8 +7,8 @@ import 'package:forcechallenge/widgets/avatar.dart';
 import '../models/notification.dart' as a;
 import 'package:forcechallenge/constants.dart' as constants;
 
-class MessageSliverListWidget extends StatelessWidget {
-  MessageSliverListWidget({this.backgroundColor, this.notificationList});
+class MessageSliverList extends StatelessWidget {
+  MessageSliverList({this.backgroundColor, this.notificationList});
   final BuiltList<a.Notification> notificationList;
   final Color backgroundColor;
 
