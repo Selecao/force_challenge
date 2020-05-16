@@ -2,8 +2,7 @@ import 'package:forcechallenge/repository/notification_repository.dart';
 import 'package:mobx/mobx.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../models/notification.dart';
-import '../models/serializers.dart';
+import '../models/notification.dart' as a;
 
 part 'message_store.g.dart';
 
@@ -20,67 +19,33 @@ abstract class _MessageStore with Store {
   _MessageStore(this._notificationRepository);
 
   @observable
-  ObservableFuture<BuiltList<Notification>> _messagesFuture;
-  @observable
-  BuiltList<Notification> messages;
-
-  @observable
-  String errorMessage;
-
-  @observable
-  int unreadMessagesCounter = 0;
+  ObservableFuture<BuiltList<a.Notification>> _messagesFuture;
+  @computed
+  BuiltList<a.Notification> get messages => _messagesFuture?.value;
+  @computed
+  FutureStatus get status => _messagesFuture?.status;
+  @computed
+  String get errorMessage => _messagesFuture?.error?.toString();
 
   @computed
-  BuiltList<Notification> get unreadMessages =>
-      BuiltList<Notification>.from(messages.where((message) => message.unread));
+  BuiltList<a.Notification> get unreadMessages =>
+      BuiltList<a.Notification>.from(
+          messages?.where((message) => message.unread) ?? []);
 
   @computed
-  BuiltList<Notification> get readMessages => BuiltList<Notification>.from(
-      messages.where((message) => !message.unread));
+  BuiltList<a.Notification> get readMessages => BuiltList<a.Notification>.from(
+      messages?.where((message) => !message.unread) ?? []);
 
   @computed
-  StoreState get state {
-    // If the user has not yet push the button firstLoad or there has been an error
-    if (_messagesFuture == null ||
-        _messagesFuture.status == FutureStatus.rejected) {
-      return StoreState.initial;
-    }
-    // Pending Future means "loading"
-    // Fulfilled Future means "loaded"
-    return _messagesFuture.status == FutureStatus.pending
-        ? StoreState.loading
-        : StoreState.loaded;
-  }
-
-  @action
-  void updateUnreadCounter() {
-    unreadMessagesCounter =
-        unreadMessages.isNotEmpty ? unreadMessages.length : 0;
-  }
-  /*@action
-  Future fetchMessages() => _messagesFuture =
-          ObservableFuture(_networkHelper.getData().then((response) {
-        return _handleListResponse<Message>(response);
-      }));*/
+  int get unreadMessagesCounter => unreadMessages.length;
 
   // fetch messageList
   @action
   // ignore: missing_return
-  Future<BuiltList<Notification>> fetchMessages() async {
-    try {
-      // Reset the possible previous error message.
-      errorMessage = null;
-      // Fetch message from the network and wrap the regular Future into an observable.
-      // This _messagesFuture triggers updates to the computed state property.
-      _messagesFuture = ObservableFuture(
-          _notificationRepository.getNotification().then((response) {
-        return response;
-      }));
-      // ObservableFuture extends Future - it can be awaited and exceptions will propagate as usual.
-      messages = await _messagesFuture;
-    } on Exception {
-      errorMessage =
-          "Не могу получить данные. Соединение с интернетом установлено?";
-    }
+  Future<BuiltList<a.Notification>> fetchMessages() async {
+    _messagesFuture = ObservableFuture(
+        _notificationRepository.getNotification().then((response) {
+      return response;
+    }));
   }
 }
