@@ -1,5 +1,4 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:dio/dio.dart';
 
 import '../models/notification.dart';
 import '../services/api_service.dart';
