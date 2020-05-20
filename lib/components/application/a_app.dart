@@ -166,7 +166,9 @@ class AAppState extends State<AApp> {
         child: CupertinoTheme(
           data: CupertinoThemeData(
             scaffoldBackgroundColor: AppTheme.of(context).whiteColor,
-            textTheme: CupertinoTextThemeData(),
+            textTheme: CupertinoTextThemeData(
+              textStyle: TextStyle(fontFamily: widget.theme.defaultFontFamily),
+            ),
           ),
           child: IconTheme(
             data: IconThemeData(
@@ -188,7 +190,7 @@ class AAppState extends State<AApp> {
               builder: widget.builder,
               title: widget.title,
               onGenerateTitle: widget.onGenerateTitle,
-              textStyle: widget.theme.bodyTextStyle,
+              textStyle: widget.theme.bodyLightTextStyle,
               color: widget.color ?? CupertinoColors.activeBlue,
               locale: widget.locale,
               localizationsDelegates: _localizationsDelegate,
