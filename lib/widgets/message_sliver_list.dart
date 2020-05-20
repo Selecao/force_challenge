@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:forcechallenge/components/span_parser.dart';
 
+import 'package:forcechallenge/components/application/app_theme.dart';
+import 'package:forcechallenge/components/span_parser.dart';
 import 'package:forcechallenge/widgets/avatar.dart';
 import '../models/notification.dart' as a;
-import 'package:forcechallenge/constants.dart' as constants;
 
 class MessageSliverList extends StatelessWidget {
   MessageSliverList({this.backgroundColor, this.notificationList});
@@ -47,25 +47,33 @@ class MessageSliverList extends StatelessWidget {
                                   case 'b':
                                     return TextSpan(
                                       text: text,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: AppTheme.of(context)
+                                          .bodyDarkTextStyle
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold),
                                     );
                                   case 'y':
                                     return TextSpan(
                                       text: text,
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic),
+                                      style: AppTheme.of(context)
+                                          .bodyDarkTextStyle
+                                          .copyWith(
+                                              fontStyle: FontStyle.italic),
                                     );
                                   case 'u':
                                     return TextSpan(
                                       text: text,
-                                      style: TextStyle(
-                                          decoration: TextDecoration.underline),
+                                      style: AppTheme.of(context)
+                                          .bodyDarkTextStyle
+                                          .copyWith(
+                                              decoration:
+                                                  TextDecoration.underline),
                                     );
                                   default:
                                     return TextSpan(
                                       text: text,
-                                      style: constants.defaultDarkTextStyle,
+                                      style: AppTheme.of(context)
+                                          .bodyDarkTextStyle,
                                     );
                                 }
                               },
@@ -79,10 +87,12 @@ class MessageSliverList extends StatelessWidget {
                             SizedBox(width: 20),
                             Text(
                               "-${notificationList[index].price} ₽",
-                              style: constants.defaultDarkTextStyle.copyWith(
-                                color: Color(0xFF00A072),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: AppTheme.of(context)
+                                  .bodyDarkTextStyle
+                                  .copyWith(
+                                    color: Color(0xFF00A072),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
@@ -93,7 +103,7 @@ class MessageSliverList extends StatelessWidget {
                   Divider(
                     height: 0.0,
                     thickness: 1.0,
-                    color: constants.greySeparator,
+                    color: AppTheme.of(context).graySeparatorColor,
                   ),
               ],
             ),

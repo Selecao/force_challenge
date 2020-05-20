@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'package:forcechallenge/components/application/a_app.dart';
+import 'package:forcechallenge/components/application/app_theme.dart';
 import 'package:forcechallenge/repository/notification_repository.dart';
 import 'package:forcechallenge/state/message_store.dart';
 import 'force_home_page.dart';
-import 'constants.dart' as constants;
 
 void main() {
   runApp(ForceChallengeApp());
@@ -22,17 +23,20 @@ class ForceChallengeApp extends StatelessWidget {
           create: (_) => NotificationRepository(),
         ),
       ],
-      child: MaterialApp(
+      child: AApp(
         showSemanticsDebugger: false,
         title: 'Flutter Demo',
-        theme: ThemeData(
+        theme: AppThemeData(),
+
+        /* there was ThemeData from MaterialApp:
+                ThemeData(
             primarySwatch: Colors.blue,
             scaffoldBackgroundColor: constants.white,
 
-            // Use the old theme but apply the following three changes
+            // Use the old theme but apply the following changes
             textTheme: Theme.of(context).textTheme.apply(
                   fontFamily: 'Helvetica',
-                )),
+                ),),*/
 
         // wrap the next page widget with proxy provider plus Store
         home: ProxyProvider<NotificationRepository, MessageStore>(

@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import 'package:forcechallenge/constants.dart' as constants;
+import 'package:forcechallenge/components/application/app_theme.dart';
 import 'package:forcechallenge/state/message_store.dart';
 
 class PageSliverHeader implements SliverPersistentHeaderDelegate {
@@ -60,11 +60,11 @@ class PageSliverHeader implements SliverPersistentHeaderDelegate {
                         child: Center(
                           child: Text(
                             '${messageStore.unreadMessagesCounter}',
-                            style: constants.defaultTextStyle,
+                            style: AppTheme.of(context).bodyLightTextStyle,
                           ),
                         ),
                         decoration: BoxDecoration(
-                            color: constants.buttonColor,
+                            color: AppTheme.of(context).blueMainColor,
                             borderRadius: BorderRadius.circular(20.0)),
                       ),
                     ),

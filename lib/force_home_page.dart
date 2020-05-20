@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:forcechallenge/components/application/app_theme.dart';
 import 'package:forcechallenge/widgets/message_sliver_list.dart';
 import 'package:forcechallenge/widgets/page_sliver_header.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 
-import 'package:forcechallenge/constants.dart' as constants;
 import 'package:forcechallenge/state/message_store.dart';
 
 class ForceHomePage extends StatefulWidget {
@@ -83,10 +83,10 @@ class _ForceHomePageState extends State<ForceHomePage> {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 40.0),
                 decoration: BoxDecoration(
-                  color: constants.greyLight,
-                  borderRadius: constants.framesRadius,
+                  color: AppTheme.of(context).grayLightColor,
+                  borderRadius: AppTheme.of(context).framesRadius,
                   boxShadow: [
-                    constants.boxShadow,
+                    AppTheme.of(context).boxShadow,
                   ],
                 ),
                 child: Padding(
@@ -95,13 +95,13 @@ class _ForceHomePageState extends State<ForceHomePage> {
                     children: [
                       Text(
                         'Вы впервые?',
-                        style: constants.boldTextStyle,
+                        style: AppTheme.of(context).greetingBoldTextStyle,
                       ),
                       SizedBox(height: 16.0),
                       Text(
                         'Это очень важное сообщение. Пожалуйста, нажмите на кнопку ниже.',
                         textAlign: TextAlign.center,
-                        style: constants.defaultDarkTextStyle,
+                        style: AppTheme.of(context).greetingTextStyle,
                       ),
                     ],
                   ),
@@ -112,14 +112,16 @@ class _ForceHomePageState extends State<ForceHomePage> {
                 children: <Widget>[
                   Expanded(
                     child: FlatButton(
-                      color: constants.buttonColor,
+                      color: AppTheme.of(context).blueMainColor,
                       padding: const EdgeInsets.all(12.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: constants.framesRadius,
+                        borderRadius: AppTheme.of(context).framesRadius,
                       ),
                       child: Text(
                         'Загрузить уведомления',
-                        style: constants.defaultTextStyle,
+                        style: AppTheme.of(context)
+                            .greetingTextStyle
+                            .copyWith(color: Colors.white),
                       ),
                       onPressed: _refresh,
                     ),
@@ -177,12 +179,12 @@ class _ForceHomePageState extends State<ForceHomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Последние',
-                style: constants.notificationTitleTextStyle,
+                style: AppTheme.of(context).notificationTitleTextStyle,
               ),
             ),
           ),
           MessageSliverList(
-            backgroundColor: constants.greyLight,
+            backgroundColor: AppTheme.of(context).grayLightColor,
             notificationList: _messageStore.unreadMessages,
           ),
           SliverToBoxAdapter(
@@ -190,7 +192,7 @@ class _ForceHomePageState extends State<ForceHomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Ранее',
-                style: constants.notificationTitleTextStyle,
+                style: AppTheme.of(context).notificationTitleTextStyle,
               ),
             ),
           ),
