@@ -28,16 +28,6 @@ class ForceChallengeApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: AppThemeData(),
 
-        /* there was ThemeData from MaterialApp:
-                ThemeData(
-            primarySwatch: Colors.blue,
-            scaffoldBackgroundColor: constants.white,
-
-            // Use the old theme but apply the following changes
-            textTheme: Theme.of(context).textTheme.apply(
-                  fontFamily: 'Helvetica',
-                ),),*/
-
         // wrap the next page widget with proxy provider plus Store
         home: ProxyProvider<NotificationRepository, MessageStore>(
           update: (_, notificationRepository, __) =>
