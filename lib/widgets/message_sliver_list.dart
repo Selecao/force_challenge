@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'package:forcechallenge/components/application/app_theme.dart';
 import 'package:forcechallenge/components/span_parser.dart';
@@ -38,7 +39,12 @@ class MessageSliverList extends StatelessWidget {
                       ),
                       SizedBox(width: 20),
                       Flexible(
-                        child: Text.rich(
+                        child: Html(
+                          data: '${notificationList[index].text}',
+                          defaultTextStyle:
+                              AppTheme.of(context).bodyDarkTextStyle,
+                        ),
+                        /*Text.rich(
                           TextSpan(
                             children: parseSpans(
                               source: notificationList[index].text,
@@ -52,7 +58,7 @@ class MessageSliverList extends StatelessWidget {
                                           .copyWith(
                                               fontWeight: FontWeight.bold),
                                     );
-                                  case 'y':
+                                  case 'i':
                                     return TextSpan(
                                       text: text,
                                       style: AppTheme.of(context)
@@ -79,7 +85,7 @@ class MessageSliverList extends StatelessWidget {
                               },
                             ),
                           ),
-                        ),
+                        ),*/
                       ),
                       if (notificationList[index].price != 0)
                         Row(
